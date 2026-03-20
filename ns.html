@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DES - Data Encryption Standard</title>
+<style>
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    scroll-behavior: smooth;
+    background: url('C:/Users/megha/Downloads/ns1.webp') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Starfield canvas overlay */
+#stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none; /* let clicks pass through */
+}
+
+/* Navbar */
+.navbar {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 25px;
+    z-index: 10;
+}
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    background: rgba(0,0,0,0.5);
+}
+.navbar a:hover {
+    background: #ffcc00;
+    color: #000;
+}
+
+/* Header */
+.header {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    z-index: 2;
+}
+.overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    background: rgba(0,0,0,0.4);
+}
+.overlay h1 {
+    font-size: 80px;
+    margin: 0;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+    animation: fadeInDown 2s ease forwards;
+}
+.overlay p {
+    font-size: 26px;
+    margin-top: 15px;
+    text-shadow: 1px 1px 8px rgba(0,0,0,0.7);
+    animation: fadeInUp 2s ease forwards;
+}
+
+/* Keyframes */
+@keyframes fadeInDown {
+    0% {opacity:0; transform: translateY(-50px);}
+    100% {opacity:1; transform: translateY(0);}
+}
+@keyframes fadeInUp {
+    0% {opacity:0; transform: translateY(50px);}
+    100% {opacity:1; transform: translateY(0);}
+}
+
+/* About Section */
+.container {
+    display: flex;
+    flex-direction: row;
+    padding: 50px 40px;
+    gap: 35px;
+    backdrop-filter: blur(10px);
+    z-index: 2;
+    position: relative;
+}
+.left {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    min-width: 220px;
+}
+.box {
+    background: rgba(0,0,0,0.6);
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+    transition: transform 0.3s;
+}
+.box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(0,0,0,0.7);
+}
+.center {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+.definition, .key-features, .how-des {
+    background: rgba(0,0,0,0.6);
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+    transition: transform 0.3s;
+}
+.definition:hover, .key-features:hover, .how-des:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0,0,0,0.6);
+}
+.definition h2, .key-features h3, .how-des h3 {
+    color: #ffcc00;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ffcc00;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+.definition p, .how-des p, .key-features ul {
+    color: white;
+    line-height: 1.8;
+    font-size: 16px;
+}
+.key-features ul {
+    list-style-type: square;
+    padding-left: 25px;
+}
+
+/* Tryit Section */
+#tryit {
+    background: rgba(0,0,0,0.7);
+    padding: 50px 40px;
+    text-align: center;
+    border-radius: 20px;
+    margin: 50px 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    z-index:2;
+    position: relative;
+}
+#tryit h2 {
+    color: #ffcc00;
+    margin-bottom: 25px;
+}
+#tryit input, #tryit button {
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    margin: 10px;
+}
+#tryit input {
+    width: 300px;
+}
+#tryit button {
+    background: #ffcc00;
+    color: black;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+#tryit button:hover {
+    background: #e6b800;
+}
+#outputText {
+    margin-top:20px;
+    font-weight:bold;
+    color:#ffcc00;
+    word-break: break-word;
+    transition: all 0.5s ease;
+}
+
+/* Responsive */
+@media screen and (max-width: 900px) {
+    .container { flex-direction: column; }
+    .left { flex-direction: row; justify-content: space-between; }
+    .box { flex: 1; }
+    #tryit input { width: 80%; }
+}
+</style>
+</head>
+<body>
+
+<!-- Starfield Canvas -->
+<canvas id="stars"></canvas>
+
+<header class="header" id="home">
+    <div class="overlay">
+        <h1>DES</h1>
+        <p>Data Encryption Standard</p>
+    </div>
+    <nav class="navbar">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#tryit">Tryit</a>
+    </nav>
+</header>
+
+<div class="container" id="about">
+    <div class="left">
+        <div class="box">Block Size: 64 bits</div>
+        <div class="box">Key Length: 56 bits</div>
+        <div class="box">Rounds: 16</div>
+    </div>
+    <div class="center">
+        <div class="definition">
+            <h2>What is DES?</h2>
+            <p>DES (Data Encryption Standard) is one of the earliest widely-used encryption algorithms. It is a symmetric-key block cipher, which means the same key is used to encrypt and decrypt data. DES was designed to secure sensitive data in computer systems and communications.</p>
+            <p><strong>Developed by:</strong> IBM in the early 1970s<br>
+               <strong>Standardized by:</strong> NIST in 1977<br>
+               <strong>Purpose:</strong> To provide a standardized method of encrypting electronic data, especially in government and banking.</p>
+        </div>
+        <div class="key-features">
+            <h3>Key Features</h3>
+            <ul>
+                <li>Symmetric-key encryption</li>
+                <li>Block size 64 bits</li>
+                <li>Uses 56-bit key</li>
+                <li>16 rounds of Feistel structure</li>
+            </ul>
+        </div>
+        <div class="how-des">
+            <h3>How DES Works</h3>
+            <p>DES operates on 64-bit blocks of plaintext using a 56-bit key.
+                 The process includes an Initial Permutation (IP), 16 rounds of Feistel function involving expansion, substitution (via S-boxes), permutation, and XOR operations, followed by a Final Permutation (FP) to produce the ciphertext. 
+                Decryption uses the same steps with subkeys applied in reverse order.</p>
+        </div>
+    </div>
+</div>
+
+<div id="tryit">
+    <h2>Try DES</h2>
+    <div style="display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:10px;">
+        <input type="text" id="inputText" placeholder="Enter text here">
+        <button onclick="simulateDES()">Encrypt</button>
+        <button onclick="decryptDES()">Decrypt</button>
+        <button onclick="clearText()">Clear</button>
+        <button onclick="copyText()">Copy</button>
+    </div>
+    <p id="outputText"></p>
+</div>
+
+<script>
+// Big star animation
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let w = canvas.width = window.innerWidth;
+let h = canvas.height = window.innerHeight;
+
+const stars = [];
+for(let i=0;i<150;i++){
+    stars.push({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        r: 1 + Math.random()*3,
+        d: 0.5 + Math.random()*2,
+        twinkle: Math.random()
+    });
+}
+
+function drawStars(){
+    ctx.clearRect(0,0,w,h);
+    stars.forEach(s=>{
+        s.twinkle += 0.02;
+        const alpha = 0.5 + 0.5 * Math.sin(s.twinkle);
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+        ctx.fill();
+    });
+    updateStars();
+    requestAnimationFrame(drawStars);
+}
+
+function updateStars(){
+    stars.forEach(s=>{
+        s.y += s.d;
+        if(s.y>h){ s.y=0; s.x=Math.random()*w; }
+    });
+}
+
+drawStars();
+window.addEventListener('resize', ()=>{
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+});
+
+// DES functions
+function simulateDES(){
+    const input = document.getElementById('inputText').value;
+    if(!input){ alert("Please enter text!"); return; }
+    const reversed = input.split('').reverse().join('');
+    const encoded = btoa(reversed);
+    const output = document.getElementById('outputText');
+    output.innerText = "Ciphertext: " + encoded;
+    output.style.color = "#ffcc00";
+    document.getElementById('inputText').value = encoded;
+}
+function decryptDES(){
+    const input = document.getElementById('inputText').value;
+    if(!input){ alert("Please enter ciphertext!"); return; }
+    try{
+        const decoded = atob(input);
+        const original = decoded.split('').reverse().join('');
+        document.getElementById('outputText').innerText = "Decrypted: " + original;
+        document.getElementById('inputText').value = original;
+        document.getElementById('outputText').style.color = "#00ffcc";
+    } catch(e){ alert("Invalid ciphertext!"); }
+}
+function clearText(){
+    document.getElementById('inputText').value="";
+    document.getElementById('outputText').innerText="";
+}
+function copyText(){
+    navigator.clipboard.writeText(document.getElementById('outputText').innerText.replace(/^Ciphertext: |^Decrypted: /,''));
+    alert("Copied to clipboard!");
+}
+</script>
+
+</body>
+</html>
